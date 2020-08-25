@@ -1,0 +1,14 @@
+﻿@model WebTestSecirity.Models.ApplicationUser
+
+@{
+    ViewBag.Title = "Confirm Email";
+}
+
+<h2>@ViewBag.Title.</h2>
+<div>
+    <p>
+        Thank you for confirming your email. Please @Html.ActionLink("Click here to Log in", "Login", "Account", routeValues: null, htmlAttributes: new { id = "loginLink" })<br>
+        UserName: @Model.UserName <br>
+        Email: @Model.Email <br>
+    </p>
+</div>
