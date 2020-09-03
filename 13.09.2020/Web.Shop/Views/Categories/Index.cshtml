@@ -1,0 +1,51 @@
+﻿@using Web.Shop.Entities
+@model List<Category>
+@{
+    ViewData["Title"] = "Список категорій";
+}
+<h1>Список категорій</h1>
+
+<div class="row">
+
+    <a class="btn btn-success" asp-action="Create">Додати категорію</a>
+</div>
+<div class="row">
+    <div class="col-md-12">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th scope="col">Id</th>
+                    <th scope="col">Name</th>
+                    <th scope="col">Image</th>
+                    <th scope="col"></th>
+                    <th scope="col"></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var cat in Model)
+                {
+                <tr>
+                    <th scope="row">@cat.Id</th>
+                    <td>@cat.Name</td>
+                    <td>
+                        <img src="/Files/@cat.Image" width="100">
+                    </td>
+                    <td><a asp-action="Edit" asp-route-id="@cat.Id">Редагувати</a></td>
+                    <td><a asp-action="Delete" asp-route-id="@cat.Id" data-action="delete">Видалити</a></td>
+                </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+    var items = document.querySelectorAll('a[data-action="delete"]');
+    items.forEach(function (item) {
+        item.addEventListener('click', function (e) {
+            if (!confirm("Ви впевнені, що хочете видалити?")) {
+                e.preventDefault();
+            }
+        });
+    });
+</script>
