@@ -1,0 +1,75 @@
+﻿@using Web.Shop.Entities
+@using Microsoft.AspNetCore.Http
+
+@model NewsVM
+@{
+    ViewData["Title"] = "Список новин";
+    var value = Context.Session.GetString("username");
+}
+<h1>Список новин [@Model.list.Count]</h1>
+@await Html.PartialAsync("_SearchData", Model.NewsFilter)
+
+<div class="row">
+
+    <a class="btn btn-success" asp-action="Create">Додати новину</a>
+</div>
+<div class="row">
+
+    <div class="col-md-12">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th scope="col">Id</th>
+                    <th scope="col">Name</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.list)
+                {
+                <tr>
+                    <th scope="row">@item.Id</th>
+                    <td>@item.Name</td>
+                    <td><a asp-action="Edit" asp-route-id="@item.Id">Редагувати</a></td>
+                    <td><a asp-action="Delete" asp-route-id="@item.Id" data-action="delete">Видалити</a></td>
+                </tr>
+                }
+            </tbody>
+        </table>
+
+
+
+        <nav>
+            <ul class="pagination">
+                @{int page = Model.Page; }
+                <li class="page-item @(page == 1? "disabled":"")">
+                    <a class="page-link" asp-action="Index" asp-controller="News"
+                       asp-route-page="@(page - 1)" asp-route-name="@Model.NewsFilter.Name" asp-route-id="@Model.NewsFilter.Id" asp-route-date="@Model.NewsFilter.Date" tabindex="-1">Previous</a>
+                </li>
+                @for (int i = 1; i < Model.maxPage + 1; i++)
+                {
+                    <li class="page-item @(page == i ? "active": "" )">
+                        <a class="page-link" asp-action="Index" asp-controller="News"
+                           asp-route-page="@i" asp-route-name="@Model.NewsFilter.Name" asp-route-id="@Model.NewsFilter.Id" asp-route-date="@Model.NewsFilter.Date">@i <span class="sr-only">(current)</span></a>
+                    </li>
+                }
+                <li class="page-item @(page == Model.maxPage? "disabled":"")">
+                    <a class="page-link" asp-action="Index" asp-controller="News" asp-route-page="@(page+1)"
+                       asp-route-name="@Model.NewsFilter.Name" asp-route-id="@Model.NewsFilter.Id" asp-route-date="@Model.NewsFilter.Date">Next</a>
+                </li>
+            </ul>
+        </nav>
+
+    </div>
+</div>
+
+
+<script>
+    var items = document.querySelectorAll('a[data-action="delete"]');
+    items.forEach(function (item) {
+        item.addEventListener('click', function (e) {
+            if (!confirm("Ви впевнені, що хочете видалити?")) {
+                e.preventDefault();
+            }
+        });
+    });
+</script>
