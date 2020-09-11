@@ -1,0 +1,74 @@
+﻿@using Web.Shop.Entities
+@model CategoryVM
+@{
+    ViewData["Title"] = "Список категорій";
+}
+<h1>Список категорій</h1>
+
+@await Html.PartialAsync("_SearchData", Model.CategoryFilter)
+
+<div class="row">
+
+    <a class="btn btn-success" asp-action="Create">Додати категорію</a>
+</div>
+<div class="row">
+    <div class="col-md-12">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th scope="col">Id</th>
+                    <th scope="col">Name</th>
+                    <th scope="col">Image</th>
+                    <th scope="col"></th>
+                    <th scope="col"></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var cat in Model.list)
+                {
+                    <tr>
+                        <th scope="row">@cat.Id</th>
+                        <td>@cat.Name</td>
+                        <td>
+                            <img src="/Files/@cat.Image" width="100">
+                        </td>
+                        <td><a asp-action="Edit" asp-route-id="@cat.Id">Редагувати</a></td>
+                        <td><a asp-action="Delete" asp-route-id="@cat.Id" data-action="delete">Видалити</a></td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+
+        <nav>
+            <ul class="pagination">
+                @{int page = Model.Page; }
+                <li class="page-item @(page == 1? "disabled":"")">
+                    <a class="page-link" asp-action="Index" asp-controller="Categories"
+                       asp-route-page="@(page - 1)" asp-route-name="@Model.CategoryFilter.Name" asp-route-id="@Model.CategoryFilter.Id" tabindex="-1">Previous</a>
+                </li>
+                @for (int i = 1; i < Model.maxPage + 1; i++)
+                {
+                    <li class="page-item @(page == i ? "active": "" )">
+                        <a class="page-link" asp-action="Index" asp-controller="Categories"
+                           asp-route-page="@i" asp-route-name="@Model.CategoryFilter.Name" asp-route-id="@Model.CategoryFilter.Id">@i <span class="sr-only">(current)</span></a>
+                    </li>
+                }
+                <li class="page-item @(page == Model.maxPage? "disabled":"")">
+                    <a class="page-link" asp-action="Index" asp-controller="Categories" asp-route-page="@(page+1)"
+                       asp-route-name="@Model.CategoryFilter.Name" asp-route-id="@Model.CategoryFilter.Id">Next</a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+</div>
+
+<script>
+    var items = document.querySelectorAll('a[data-action="delete"]');
+    items.forEach(function (item) {
+        item.addEventListener('click', function (e) {
+            if (!confirm("Ви впевнені, що хочете видалити?")) {
+                e.preventDefault();
+            }
+        });
+    });
+</script>
