@@ -1,0 +1,109 @@
+﻿@model Web.Shop.Models.RegistrationViewModel
+@{ ViewData["Title"] = "Registration"; }
+
+@section Styles {
+    <link href="~/lib/cropperjs/cropper.min.css" rel="stylesheet" />
+}
+
+<a asp-action="Register" asp-controller="Account">Створити новий акаунт</a>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Registration">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="Email" class="control-label"></label>
+                <input asp-for="Email" class="form-control" />
+                <span asp-validation-for="Email" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="PhoneNumber" class="control-label"></label>
+                <input asp-for="PhoneNumber" class="form-control" />
+                <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label class="control-label">Оберіть фото</label>
+                <input id="file-input" type="file" />
+                <img src="~/img/no-image.png" alt="User Image" id="userImageCrop" />
+            </div>
+            <div class="form-group">
+                <label asp-for="Password" class="control-label"></label>
+                <input asp-for="Password" class="form-control" />
+                <span asp-validation-for="Password" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Registration" class="btn btn-success" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Button trigger modal -->
+<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
+    Launch demo modal
+</button>
+
+<!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Редагування фото</h5>
+              
+            </div>
+            <div class="modal-body">
+                <img src="~/img/no-image.png" alt="User Image" id="userImage" class="img-fluid"/>
+                <a href="#" class="btn btn-danger" id="rotateImage">Повернути</a>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" id="croppedImage">Підтвердити</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script src="~/lib/cropperjs/cropper.min.js"></script>
+    <script>
+
+        var fileInput = document.getElementById("file-input");
+        var userImage = document.getElementById("userImage");
+        var cropper = new Cropper(userImage, {
+            aspectRatio: 1 / 1
+        });
+
+        fileInput.addEventListener('change', function (e) {
+
+            var reader = new FileReader();
+
+            reader.onloadend = function () {
+                cropper.destroy();
+                userImage.src = reader.result;
+                cropper = new Cropper(userImage, {
+                    aspectRatio: 1 / 1
+                });
+            }
+           
+            reader.readAsDataURL(e.target.files[0]);
+          
+        });
+
+
+        $(function () {
+            
+            $("#croppedImage").on("click", function (e) {
+                e.preventDefault();
+                var contentImage = cropper.getCroppedCanvas().toDataURL();
+                $("#userImageCrop").attr("src", contentImage);
+                //console.log('--Image data--', contentImage);
+
+            });
+            $("#rotateImage").on("click", function (e) {
+                e.preventDefault();
+                cropper.rotate(45);
+            });
+        });
+    </script>
+}
+
