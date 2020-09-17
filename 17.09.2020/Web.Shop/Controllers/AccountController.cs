@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Web.Shop.Entities;
@@ -15,14 +17,17 @@ namespace Web.Shop.Controllers
         private readonly UserManager<DbUser> _userManager;
         private readonly SignInManager<DbUser> _signInManager;
         private readonly RoleManager<DbRole> _roleManager;
+        private readonly IWebHostEnvironment _env;
 
         public AccountController(UserManager<DbUser> userManager,
             SignInManager<DbUser> signInManager,
-            RoleManager<DbRole> roleManager)
+            RoleManager<DbRole> roleManager,
+            IWebHostEnvironment env)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _roleManager = roleManager;
+            _env = env;
         }
 
         [HttpGet]
@@ -81,11 +86,30 @@ namespace Web.Shop.Controllers
             }
             if (ModelState.IsValid)
             {
+                var serverPath = _env.ContentRootPath; //Directory.GetCurrentDirectory(); //_env.WebRootPath;
+                var folerName = "Uploads";
+                var path = Path.Combine(serverPath, folerName); //
+                if (!Directory.Exists(path))
+                {
+                    Directory.CreateDirectory(path);
+                }
+                string ext = Path.GetExtension(model.Image.FileName);
+                string fileName = Path.GetRandomFileName() + ext;
+
+                string filePathSave = Path.Combine(path, fileName);
+
+                // сохраняем файл в папку Files в каталоге wwwroot
+                using (var fileStream = new FileStream(filePathSave, FileMode.Create))
+                {
+                    await model.Image.CopyToAsync(fileStream);
+                }
+
                 var user = new DbUser
                 {
                     Email = model.Email,
                     UserName = model.Email,
-                    PhoneNumber = model.PhoneNumber
+                    PhoneNumber = model.PhoneNumber,
+                    Image = fileName,
                 };
                 var result =  await _userManager.CreateAsync(user, model.Password);
                 if(result.Succeeded)

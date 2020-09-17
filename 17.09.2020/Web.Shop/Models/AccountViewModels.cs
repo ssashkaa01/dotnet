@@ -1,8 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using Microsoft.AspNetCore.Http;
+
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Web.Shop.Models
 {
@@ -33,5 +31,9 @@ namespace Web.Shop.Models
         [DataType(DataType.Password)]
         [Required(ErrorMessage = "Invalid password")]
         public string Password { get; set; }
+
+        [Display(Name = "Фото")]
+        //[Required(ErrorMessage = "Оберіть фото")]
+        public IFormFile Image { get; set; }
     }
 }

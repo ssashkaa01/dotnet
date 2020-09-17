@@ -36,8 +36,10 @@ namespace Web.Shop.Entities
                 {
                     Email = email,
                     UserName = email,
-                    PhoneNumber = "+11(111)111-11-11"
+                    PhoneNumber = "+11(111)111-11-11",
+                    Image = ""
                 };
+
                 result = manager.CreateAsync(user, "33Ki9x66-3of+s").Result;
                 result = manager.AddToRoleAsync(user, roleName).Result;
             }
